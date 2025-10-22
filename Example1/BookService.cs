@@ -1,4 +1,4 @@
-namespace MinimalApis
+namespace Example1
 {
     public interface IBookService
     {
