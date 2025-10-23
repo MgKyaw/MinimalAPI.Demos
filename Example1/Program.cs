@@ -18,7 +18,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Getting started with Minimal API.");
 
 app.MapGet("/books", (IBookService bookService) =>
     TypedResults.Ok(bookService.GetBooks()))
