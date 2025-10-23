@@ -1,9 +1,22 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using static System.Security.Cryptography.RandomNumberGenerator;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<HuggingService>();
 var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
+
+async ValueTask<object?> Timestamp(
+        EndpointFilterInvocationContext ctx,
+        EndpointFilterDelegate next
+    )
+{
+    var result = await next(ctx);
+    if (result is Ok<Hugged> { Value: { } } hugged)
+        hugged.Value.Timestamp = DateTime.UtcNow;
+    return result;
+}
 
 app.MapPost("/hugs", (Hug hug, HuggingService hugger) =>
     Results.Ok(hugger.Hug(hug))
@@ -12,7 +25,10 @@ app.MapPost("/hugs", (Hug hug, HuggingService hugger) =>
 app.Run();
 
 public record Hug(string Name);
-public record Hugged(string Name, string Kind);
+public record Hugged(string Name, string Kind)
+{
+    public DateTime? Timestamp { get; set; } = DateTime.UnixEpoch;
+}
 
 public class HuggingService
 {
