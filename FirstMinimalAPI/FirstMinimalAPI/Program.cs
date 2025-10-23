@@ -5,8 +5,8 @@ var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapPost("/hugs", (Hug hug) =>
-    Results.Ok(new Hugged(hug.Name, "Side Hug"))
+app.MapPost("/hugs", (Hug hug, HuggingService hugger) =>
+    Results.Ok(hugger.Hug(hug))
 );
 
 app.Run();
